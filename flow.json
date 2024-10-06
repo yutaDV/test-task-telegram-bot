@@ -1,0 +1,2113 @@
+[
+    {
+        "id": "38c5127c2180bb22",
+        "type": "tab",
+        "label": "telegram",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "7ce269cade38053a",
+        "type": "group",
+        "z": "38c5127c2180bb22",
+        "style": {
+            "stroke": "#999999",
+            "stroke-opacity": "1",
+            "fill": "none",
+            "fill-opacity": "1",
+            "label": true,
+            "label-position": "nw",
+            "color": "#a4a4a4"
+        },
+        "nodes": [
+            "bc6d90a7c93a61f7",
+            "61711b5dfa53f887",
+            "45af332c1a2ac235"
+        ],
+        "x": 254,
+        "y": 19,
+        "w": 612,
+        "h": 122
+    },
+    {
+        "id": "61711b5dfa53f887",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "g": "7ce269cade38053a",
+        "name": "Set GlobalConfig",
+        "func": "global.set(\"telegramToken\", \"7879384423:AAFlMVoJKyxQr-36IKuuOFETKN7iIU6CEAA\");\n\nglobal.set(\"telegramBaseUrl\", \"https://api.telegram.org/bot\" );\n\nglobal.set(\"lastUpdateId\", 0);\n\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "45af332c1a2ac235",
+        "type": "inject",
+        "z": "38c5127c2180bb22",
+        "g": "7ce269cade38053a",
+        "name": "started",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 360,
+        "y": 100,
+        "wires": [
+            [
+                "61711b5dfa53f887"
+            ]
+        ]
+    },
+    {
+        "id": "c457dcea40be7bef",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "SELECT all users",
+        "query": "SELECT * FROM users;\n",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 290,
+        "y": 1600,
+        "wires": [
+            [
+                "8241d73299b39bbf"
+            ]
+        ]
+    },
+    {
+        "id": "f5579e72c7e2628a",
+        "type": "inject",
+        "z": "38c5127c2180bb22",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 155,
+        "y": 1600,
+        "wires": [
+            [
+                "c457dcea40be7bef"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "8241d73299b39bbf",
+        "type": "debug",
+        "z": "38c5127c2180bb22",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 415,
+        "y": 1600,
+        "wires": [],
+        "l": false
+    },
+    {
+        "id": "59f7dc60823279d4",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "Prep welcome",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nconst welcomeMessage = msg.responseMessage + \"\\nЯ бот, який допоможе тобі не пропустити дні народження твоїх друзів!\";\n\nconst chatId = msg.chatId;\nmsg.payload = {\n    \"chat_id\": chatId.toString(),  \n    \"text\": welcomeMessage \n};\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\n\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 420,
+        "wires": [
+            [
+                "795adf8dd8a64073"
+            ]
+        ]
+    },
+    {
+        "id": "795adf8dd8a64073",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "POST welcome",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 680,
+        "y": 420,
+        "wires": [
+            [
+                "e0515b46d539746f"
+            ]
+        ]
+    },
+    {
+        "id": "bc6d90a7c93a61f7",
+        "type": "comment",
+        "z": "38c5127c2180bb22",
+        "g": "7ce269cade38053a",
+        "name": "passwords",
+        "info": "HTTP API:\n7879384423:AAFlMVoJKyxQr-36IKuuOFETKN7iIU6CEAA\nUser Id Information : 510507675\n@coolBirthdayBot",
+        "x": 780,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "fea68d421c23119f",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "delete users",
+        "query": "DELETE FROM messages WHERE user_id = (SELECT id FROM users WHERE chat_id = '510507675');\nDELETE FROM users WHERE chat_id = '510507675';\n\n\n",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 250,
+        "y": 1720,
+        "wires": [
+            [
+                "b9e8ba4df7c38496"
+            ]
+        ]
+    },
+    {
+        "id": "78802d0a4c531457",
+        "type": "inject",
+        "z": "38c5127c2180bb22",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 135,
+        "y": 1720,
+        "wires": [
+            [
+                "fea68d421c23119f"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "b9e8ba4df7c38496",
+        "type": "debug",
+        "z": "38c5127c2180bb22",
+        "name": "debug 19",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 375,
+        "y": 1720,
+        "wires": [],
+        "l": false
+    },
+    {
+        "id": "0e760bf298278ceb",
+        "type": "comment",
+        "z": "38c5127c2180bb22",
+        "name": "Task",
+        "info": "Тестове завдання:\nВстановити Node-red\nhttps://nodered.org/\nВстановити постгрес\nhttps://www.postgresql.org/\n\nСтворити за допомогою цих ПЗ бота в телеграмі, що використовує REST API telegram\nhttps://core.telegram.org/bots/api\n\nНаприклад:\nБот що реєструє користувачів, і дозволяє зберігати там контакти та їх дні народження. Можна запитати день народження по комусь, кого користувач зберіг, або отримати перелік всіх, кого зберіг там.\n\nЩо хочемо побачити - розуміння \n- роботи з REST API\n- анатомії HTTP запитів та Їх різних типів\n- роботи з БД\n\nНЕ використовувати готову ноду для телеграм - використовувати http request\n",
+        "x": 90,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "05b536b04d9eb94b",
+        "type": "inject",
+        "z": "38c5127c2180bb22",
+        "name": "start",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 90,
+        "y": 320,
+        "wires": [
+            [
+                "a8d9f2e975e1efd5"
+            ]
+        ]
+    },
+    {
+        "id": "6f3c34776302f3eb",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "GET",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 350,
+        "y": 320,
+        "wires": [
+            [
+                "1ceed95f52df8921"
+            ]
+        ]
+    },
+    {
+        "id": "a8d9f2e975e1efd5",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "Prep GET",
+        "func": "\nlet telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nlet lastUpdateId = global.get(\"lastUpdateId\") || 0;\n\nmsg.url = telegramBaseUrl + telegramToken + \"/getUpdates?offset=\" + (lastUpdateId+1);\n\nreturn msg;\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 220,
+        "y": 320,
+        "wires": [
+            [
+                "6f3c34776302f3eb"
+            ]
+        ]
+    },
+    {
+        "id": "1ceed95f52df8921",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "Result ",
+        "func": "if (typeof msg.payload === \"string\") {\n    try {\n        msg.payload = JSON.parse(msg.payload); // Розпарсити JSON \n    } catch (e) {\n        node.error(\"Failed to parse JSON: \" + e.message, msg);\n        return null;\n    }\n}\n\n\nlet users = {};\nlet messages = [];\nlet lastUpdateId = 0;\n\n\nif (msg.payload && msg.payload.result && Array.isArray(msg.payload.result)) {\n    if (msg.payload.result.length > 0) {\n        msg.payload.result.forEach(update => {\n            if (update.message) {\n                const firstName = update.message.from.first_name; \n                const chatId = update.message.chat.id; \n                const messageId = update.message.message_id; \n                const messageText = update.message.text; \n                const date = new Date(update.message.date * 1000); \n                const isBot = update.message.from.is_bot; \n\n                lastUpdateId = update.update_id;\n\n                if (!users[chatId]) {\n                    users[chatId] = {\n                        firstName: firstName,\n                        chatId: chatId\n                    };\n                }\n\n                messages.push({\n                    chatId: chatId,         \n                    messageId: messageId,  \n                    messageText: messageText, \n                    timestamp: date.toISOString(), \n                    isBot: isBot \n                });\n            }\n        });\n\n        global.set(\"lastUpdateId\", lastUpdateId);\n\n        msg.userData = Object.values(users);\n        msg.messageData = messages;\n\n        \n        //console.log(\"User Data: \", msg.userData);\n        //console.log(\"Message Data: \", msg.messageData);\n        //console.log(\"Last Update ID: \", lastUpdateId);\n\n    } else {\n\n        console.log(\"No new updates found.\");\n    }\n} else {\n    node.error(\"No valid updates found\", msg);\n    return null;\n}\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 320,
+        "wires": [
+            [
+                "c40ce4e6e2f60cf2",
+                "3fd759a2302099fe"
+            ]
+        ]
+    },
+    {
+        "id": "a635501de1ebcf82",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "SELECT all messages",
+        "query": "SELECT * \nFROM messages \nWHERE chat_id = 510507675 \nORDER BY timestamp DESC;\n\n",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 290,
+        "y": 1660,
+        "wires": [
+            [
+                "0da25c5215e96429"
+            ]
+        ]
+    },
+    {
+        "id": "b79436c1391a7305",
+        "type": "inject",
+        "z": "38c5127c2180bb22",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 145,
+        "y": 1660,
+        "wires": [
+            [
+                "a635501de1ebcf82"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "0da25c5215e96429",
+        "type": "debug",
+        "z": "38c5127c2180bb22",
+        "name": "debug 23",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 455,
+        "y": 1660,
+        "wires": [],
+        "l": false
+    },
+    {
+        "id": "c40ce4e6e2f60cf2",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "Prepare  messages to DB",
+        "func": "let messages = [];\n\nif (msg.messageData && Array.isArray(msg.messageData) && msg.messageData.length > 0) {\n \n    const queries = msg.messageData.map(message => {\n        return `\n            INSERT INTO messages (user_id, message_text, timestamp, chat_id, message_id, is_bot)\n            VALUES (\n                (SELECT id FROM users WHERE chat_id = '${message.chatId}' LIMIT 1),\n                '${message.messageText.replace(/'/g, \"''\")}',\n                '${message.timestamp}',\n                ${message.chatId},      \n                ${message.messageId},\n                ${message.isBot ? 'true' : 'false'}  -- Додаємо інформацію про те, чи відправлено ботом\n            );\n        `;\n    });\n\n    console.log(\"Message Data: \", JSON.stringify(msg.messageData, null, 2));\n\n    if (queries.length > 0) {\n        msg.query = queries.join(\"\\n\");\n        //console.log(\"Executing query:\", msg.query);\n    } else {\n        console.log(\"No messages to insert.\");\n        return null; \n    }\n} else {\n    console.log(\"No message data found, skipping database update.\");\n    return null; \n}\n\nreturn msg; ",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 220,
+        "wires": [
+            [
+                "674d0a849a5cd0e9"
+            ]
+        ]
+    },
+    {
+        "id": "674d0a849a5cd0e9",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add users messages",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 920,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4177afed5f844697",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "verification",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 850,
+        "y": 320,
+        "wires": [
+            [
+                "7681b433e0c66f1c"
+            ]
+        ]
+    },
+    {
+        "id": "3fd759a2302099fe",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "Verification SQL Quer",
+        "func": "\nif (msg.userData && Array.isArray(msg.userData) && msg.userData.length > 0) {\n    const user = msg.userData[0]; \n    const chatId = user.chatId;\n\n    msg.query = `SELECT * FROM users WHERE chat_id = '${chatId}';`;\n    msg.chatId = chatId; \n\n    return msg; \n} else {\n\n    return null;\n}\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 320,
+        "wires": [
+            [
+                "4177afed5f844697"
+            ]
+        ]
+    },
+    {
+        "id": "db0e830c8dc11256",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "new ",
+        "func": "if (msg.userData && Array.isArray(msg.userData) && msg.userData.length > 0) {\n  \n    const newUser = msg.userData[0]; \n    msg.query = `\n        INSERT INTO users (name, chat_id, registration_date, last_update_date) \n        VALUES ('${newUser.firstName.replace(/'/g, \"''\")}', '${newUser.chatId}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);\n    `;\n\n \n    msg.responseMessage = \"Ласкаво просимо в чат!\";\n}\n\nreturn msg; \n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 210,
+        "y": 420,
+        "wires": [
+            [
+                "332d422c78d418b1"
+            ]
+        ]
+    },
+    {
+        "id": "332d422c78d418b1",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add user",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 340,
+        "y": 420,
+        "wires": [
+            [
+                "59f7dc60823279d4"
+            ]
+        ]
+    },
+    {
+        "id": "903a9812fbfcb77d",
+        "type": "switch",
+        "z": "38c5127c2180bb22",
+        "name": "",
+        "property": "payload.length",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lte",
+                "v": "0",
+                "vt": "num"
+            },
+            {
+                "t": "neq",
+                "v": "0",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 125,
+        "y": 520,
+        "wires": [
+            [
+                "db0e830c8dc11256"
+            ],
+            [
+                "c1519cbd1150fd5f"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "c1519cbd1150fd5f",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "active ",
+        "func": "const chatId = msg.chatId;\n\nconst query = `\n    SELECT * \n    FROM messages \n    WHERE chat_id = ${chatId} \n    ORDER BY timestamp DESC \n    LIMIT 5\n`;\n\nmsg.query = query;\nconsole.log(\"SQL Query for last two messages: \", query);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 230,
+        "y": 540,
+        "wires": [
+            [
+                "6a5482667846d84c"
+            ]
+        ]
+    },
+    {
+        "id": "3aeeeedca927c27a",
+        "type": "link in",
+        "z": "38c5127c2180bb22",
+        "name": "link in 1",
+        "links": [
+            "7681b433e0c66f1c"
+        ],
+        "x": 55,
+        "y": 520,
+        "wires": [
+            [
+                "903a9812fbfcb77d"
+            ]
+        ]
+    },
+    {
+        "id": "7681b433e0c66f1c",
+        "type": "link out",
+        "z": "38c5127c2180bb22",
+        "name": "link out 1",
+        "mode": "link",
+        "links": [
+            "3aeeeedca927c27a"
+        ],
+        "x": 1035,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "cd0702f1854650e9",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "SELECT last mess",
+        "query": "SELECT * \nFROM messages \nWHERE chat_id = 510507675 \nORDER BY timestamp DESC \nLIMIT 10;\n",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 290,
+        "y": 1540,
+        "wires": [
+            [
+                "54690b27cc8b5a59"
+            ]
+        ]
+    },
+    {
+        "id": "12403485a21720da",
+        "type": "inject",
+        "z": "38c5127c2180bb22",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 155,
+        "y": 1540,
+        "wires": [
+            [
+                "cd0702f1854650e9"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "54690b27cc8b5a59",
+        "type": "debug",
+        "z": "38c5127c2180bb22",
+        "name": "debug 35",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 415,
+        "y": 1540,
+        "wires": [],
+        "l": false
+    },
+    {
+        "id": "e0515b46d539746f",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "Prep  instruction",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nconst chatId = msg.chatId;\n\nconst commandPrompt = \"Які команди ти хочеш виконати? \\n\" +\n    \"1  — Додати контакт\\n\" +\n    \"2  — Переглянути контакти\\n\" +\n    \"3  — Видалити контакт\\n\" +\n    \"0  — завершити чат\\n\" +\n    \"Введи  команду (1, 2, 3 або 0):\";\n\nmsg.payload = {\n    \"chat_id\": chatId.toString(),\n    \"text\": commandPrompt\n};\n\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\n\nconst botMessage = {\n    chatId: chatId,\n    messageText: \"bot1\", \n    messageId: null,  \n    timestamp: new Date().toISOString() \n};\n\n\nconst query = `\n    INSERT INTO messages (user_id, message_text, timestamp, chat_id, message_id, is_bot)\n    VALUES (\n        (SELECT id FROM users WHERE chat_id = '${botMessage.chatId}' LIMIT 1),\n        '${botMessage.messageText}', \n        '${botMessage.timestamp}',\n        ${botMessage.chatId},\n        NULL,\n        true  \n    );\n`;\n\nmsg.query = query;\n\nconsole.log(\"Bot Message Data: \", JSON.stringify(botMessage, null, 2));\nconsole.log(\"SQL Query: \", query);\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 860,
+        "y": 420,
+        "wires": [
+            [
+                "6813b156a2b78ea7",
+                "a7f669016d71971e"
+            ]
+        ]
+    },
+    {
+        "id": "6813b156a2b78ea7",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "Send instruction",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1060,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a7f669016d71971e",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add bot mess",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1100,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6a5482667846d84c",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "get 10 last mess",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 380,
+        "y": 540,
+        "wires": [
+            [
+                "e12b027d167cb40c"
+            ]
+        ]
+    },
+    {
+        "id": "e12b027d167cb40c",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "check time",
+        "func": "\nif (msg.payload.length < 2) {\n    node.error(\"Недостатньо повідомлень для обробки\");\n    return null;  \n}\n\nconst previousMessage = msg.payload[1];\n\nlet now = new Date();\n\nnow.setHours(now.getHours() - 3);\n\nconst previousMessageTime = new Date(previousMessage.timestamp);\n\n\nconst timeDifference = now.getTime() - previousMessageTime.getTime();\n\nconst hoursDifference = timeDifference / (1000 * 60 * 60);\n\nmsg.timeDifference = hoursDifference;\n\nconsole.log(`Hours since the previous message: ${hoursDifference}`);\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 540,
+        "wires": [
+            [
+                "79397d598fc13041"
+            ]
+        ]
+    },
+    {
+        "id": "79397d598fc13041",
+        "type": "switch",
+        "z": "38c5127c2180bb22",
+        "name": "",
+        "property": "timeDifference",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gt",
+                "v": "8",
+                "vt": "str"
+            },
+            {
+                "t": "lte",
+                "v": "8",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 685,
+        "y": 540,
+        "wires": [
+            [
+                "b7a1df4430696ba5"
+            ],
+            [
+                "099f6dff2cba1059"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "714c8139dfe4e9cc",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "POST instruction",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1145,
+        "y": 500,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "6b5b156f64439ba9",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "instruction",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nconst chatId = msg.chatId;\n\nconst commandPrompt =  \"Які команди ти хочеш виконати? \\n\" +\n    \"1  — Додати контакт\\n\" +\n    \"2  — Переглянути контакти\\n\" +\n    \"3  — Видалити контакт\\n\" +\n    \"0  — завершити чат\\n\" +\n    \"Введи  команду (1, 2, 3 або 0):\";\n\n\nmsg.payload = {\n    \"chat_id\": chatId.toString(),\n    \"text\": commandPrompt\n};\n\n\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\n\nconst botMessage = {\n    chatId: chatId,\n    messageText: \"bot1\", \n    messageId: null,  \n    timestamp: new Date().toISOString() \n};\n\nconst query = `\n    INSERT INTO messages (user_id, message_text, timestamp, chat_id, message_id, is_bot)\n    VALUES (\n        (SELECT id FROM users WHERE chat_id = '${botMessage.chatId}' LIMIT 1),\n        '${botMessage.messageText}', \n        '${botMessage.timestamp}',\n        ${botMessage.chatId},\n        NULL,\n        true  \n    );\n`;\n\nmsg.query = query;\n\n//console.log(\"Bot Message Data: \", JSON.stringify(botMessage, null, 2));\n//console.log(\"SQL Query: \", query);\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1010,
+        "y": 500,
+        "wires": [
+            [
+                "714c8139dfe4e9cc",
+                "9fd2eac096a411ba"
+            ]
+        ]
+    },
+    {
+        "id": "9fd2eac096a411ba",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add bot mess",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1185,
+        "y": 460,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "b7a1df4430696ba5",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "Prep hello",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nconst welcomeMessage = \"Привіт, я допоможу тобі не пропустити дні народження твоїх друзів!\";\n\nconst chatId = msg.chatId;\nmsg.payload = {\n    \"chat_id\": chatId.toString(),  \n    \"text\": welcomeMessage \n};\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\n\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 500,
+        "wires": [
+            [
+                "252762bb0a62f08e"
+            ]
+        ]
+    },
+    {
+        "id": "252762bb0a62f08e",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "POST hello",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 895,
+        "y": 500,
+        "wires": [
+            [
+                "6b5b156f64439ba9"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "962fab597013ba72",
+        "type": "link out",
+        "z": "38c5127c2180bb22",
+        "name": "link out 4",
+        "mode": "link",
+        "links": [
+            "709111e4e78cbf51"
+        ],
+        "x": 955,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "709111e4e78cbf51",
+        "type": "link in",
+        "z": "38c5127c2180bb22",
+        "name": "link in 3",
+        "links": [
+            "962fab597013ba72"
+        ],
+        "x": 45,
+        "y": 800,
+        "wires": [
+            [
+                "8bc0b3146b04db4a"
+            ]
+        ]
+    },
+    {
+        "id": "a5eff93325f83485",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "add cont",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nconst Message = \"Введіть ім'я контакту\";\n\nconst chatId = msg.chatId;\nmsg.payload = {\n    \"chat_id\": chatId.toString(),\n    \"text\": Message\n};\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\n\nconst botMessage = {\n    chatId: chatId,\n    messageText: \"bot2\",\n    messageId: null,\n    timestamp: new Date().toISOString()\n};\n\nconst query = `\n    INSERT INTO messages (user_id, message_text, timestamp, chat_id, message_id, is_bot)\n    VALUES (\n        (SELECT id FROM users WHERE chat_id = '${botMessage.chatId}' LIMIT 1),\n        '${botMessage.messageText}', \n        '${botMessage.timestamp}',\n        ${botMessage.chatId},\n        NULL, \n        true  \n    );\n`;\n\nmsg.query = query;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 660,
+        "wires": [
+            [
+                "3334ae2457efd486",
+                "3584ff725da7b294"
+            ]
+        ]
+    },
+    {
+        "id": "3334ae2457efd486",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "respond",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 580,
+        "y": 660,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "099f6dff2cba1059",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "mess analisys",
+        "func": "let messages = msg.payload;\n\nif (messages.length < 2) {\n    msg.payload = \"Недостатньо повідомлень для обробки.\";\n    return msg; \n}\n\nlet lastMessage = messages[0].message_text;  \nlet secondLastMessage = messages[1].message_text;  \n\nlet botMessages = [];\nlet clientMessages = [];\n\n\nmessages.forEach(message => {\n    if (message.is_bot) {\n        botMessages.push(message);  \n    } else {\n        clientMessages.push(message);  \n    }\n});\n//console.log(`lastMessage: ${lastMessage}`);\n//console.log(`secondLastMessage: ${secondLastMessage}`);\n//console.log(`Bot Messages:`, botMessages);\n//console.log(`Client Messages:`, clientMessages);\n\nmsg.lastMessage = lastMessage;\nmsg.secondLastMessage = secondLastMessage;\nmsg.botMessages = botMessages;\nmsg.clientMessages = clientMessages;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 840,
+        "y": 560,
+        "wires": [
+            [
+                "962fab597013ba72"
+            ]
+        ]
+    },
+    {
+        "id": "8bc0b3146b04db4a",
+        "type": "switch",
+        "z": "38c5127c2180bb22",
+        "name": "commands",
+        "property": "msg.lastMessage",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "2",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "3",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "str"
+            },
+            {
+                "t": "neq",
+                "v": "1",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 5,
+        "x": 150,
+        "y": 800,
+        "wires": [
+            [
+                "a5eff93325f83485"
+            ],
+            [
+                "c0559b30c967982c"
+            ],
+            [
+                "d15ba24ed4a5c998"
+            ],
+            [
+                "8d908899fe4cca8a"
+            ],
+            [
+                "1dcb8e0e1bbc8887"
+            ]
+        ]
+    },
+    {
+        "id": "c0559b30c967982c",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "see cont",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nconst Message = \"Ось ваші контакти\";\n\nconst chatId = msg.chatId;\nmsg.payload = {\n    \"chat_id\": chatId.toString(),\n    \"text\": Message\n};\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\n\nconst botMessage = {\n    chatId: chatId,\n    messageText: \"bot3\",\n    messageId: null,\n    timestamp: new Date().toISOString()\n};\n\nconst query = `\n    INSERT INTO messages (user_id, message_text, timestamp, chat_id, message_id, is_bot)\n    VALUES (\n        (SELECT id FROM users WHERE chat_id = '${botMessage.chatId}' LIMIT 1),\n        '${botMessage.messageText}', \n        '${botMessage.timestamp}',\n        ${botMessage.chatId},\n        NULL, \n        true  \n    );\n`;\n\nmsg.query = query;\n\n//console.log(\"SQL Query: \", query);\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 760,
+        "wires": [
+            [
+                "dbd0246a7243e1ac",
+                "3976c009d0226cf7"
+            ]
+        ]
+    },
+    {
+        "id": "dbd0246a7243e1ac",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "respond",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 520,
+        "y": 760,
+        "wires": [
+            [
+                "4a0d3717b6518fe0"
+            ]
+        ]
+    },
+    {
+        "id": "d15ba24ed4a5c998",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "delete cont",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nconst Message = \"Введіть ім'я контакту для видалення\";\n\nconst chatId = msg.chatId;\nmsg.payload = {\n    \"chat_id\": chatId.toString(),\n    \"text\": Message\n};\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\n\nconst botMessage = {\n    chatId: chatId,\n    messageText: \"bot4\",\n    messageId: null,\n    timestamp: new Date().toISOString()\n};\n\nconst query = `\n    INSERT INTO messages (user_id, message_text, timestamp, chat_id, message_id, is_bot)\n    VALUES (\n        (SELECT id FROM users WHERE chat_id = '${botMessage.chatId}' LIMIT 1),\n        '${botMessage.messageText}', \n        '${botMessage.timestamp}',\n        ${botMessage.chatId},\n        NULL, \n        true  \n    );\n`;\n\nmsg.query = query;\n\n//console.log(\"SQL Query: \", query);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 840,
+        "wires": [
+            [
+                "60c09f5e4717e19a",
+                "5cfbe78e4309e2fa"
+            ]
+        ]
+    },
+    {
+        "id": "60c09f5e4717e19a",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "respond",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 720,
+        "y": 840,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3584ff725da7b294",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add bot mess",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 455,
+        "y": 620,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "84836327183ebe56",
+        "type": "comment",
+        "z": "38c5127c2180bb22",
+        "name": "bot massages",
+        "info": "1 - \"Які команди ти хочеш виконати? \\n\" +\n    \"(введи 1, 2 або 3) \\n\" +\n    \"1  — Додати контакт\\n\" +\n    \"2  — Переглянути контакти\\n\" +\n    \"3  — Видалити контакт\\n\" +\n    \"Введи команду:\";\n2 - \"Введіть ім'я контакту\"\n3-  Ось ваші контакти\n4 - Введіть ім'я контакту для видалення.\n5 - Бувай до зустрічі\n6- введіть дату народження у форматі :DD.MM.YYYY\"\n7 - хвилинку додаю твої контакти\n8 - результат додано \n9 -Введіть ім'я контакту для видалення:",
+        "x": 110,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "3976c009d0226cf7",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add bot mess",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 475,
+        "y": 700,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "5cfbe78e4309e2fa",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add bot mess",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 475,
+        "y": 800,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "8d908899fe4cca8a",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "bye",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nconst Message = \"Бувай до зустрічі\";\n\nconst chatId = msg.chatId;\nmsg.payload = {\n    \"chat_id\": chatId.toString(),\n    \"text\": Message\n};\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\n\nconst botMessage = {\n    chatId: chatId,\n    messageText: \"bot5\",\n    messageId: null,\n    timestamp: new Date().toISOString()\n};\n\nconst query = `\n    INSERT INTO messages (user_id, message_text, timestamp, chat_id, message_id, is_bot)\n    VALUES (\n        (SELECT id FROM users WHERE chat_id = '${botMessage.chatId}' LIMIT 1),\n        '${botMessage.messageText}', \n        '${botMessage.timestamp}',\n        ${botMessage.chatId},\n        NULL, \n        true  \n    );\n`;\n\nmsg.query = query;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 920,
+        "wires": [
+            [
+                "a71a77806d03ad38",
+                "47fadf3b93ebd758"
+            ]
+        ]
+    },
+    {
+        "id": "a71a77806d03ad38",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "respond",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 680,
+        "y": 920,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "47fadf3b93ebd758",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add bot mess",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 545,
+        "y": 880,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "aae65b30aaae0125",
+        "type": "switch",
+        "z": "38c5127c2180bb22",
+        "name": "",
+        "property": "lastMessageBot",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "bot2",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "bot6",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "bot4",
+                "vt": "str"
+            },
+            {
+                "t": "neq",
+                "v": "bot2",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 4,
+        "x": 325,
+        "y": 1180,
+        "wires": [
+            [
+                "42fa631461962111"
+            ],
+            [
+                "6d956f792630260e"
+            ],
+            [
+                "df6447fd76006e88"
+            ],
+            [
+                "d3e7e67618712813"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "42fa631461962111",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "add data ",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nconst Message = \"введіть дату народження у форматі :DD.MM.YYYY\";\n\nconst chatId = msg.chatId;\nmsg.payload = {\n    \"chat_id\": chatId.toString(),\n    \"text\": Message\n};\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\n\nconst botMessage = {\n    chatId: chatId,\n    messageText: \"bot6\",\n    messageId: null,\n    timestamp: new Date().toISOString()\n};\n\nconst query = `\n    INSERT INTO messages (user_id, message_text, timestamp, chat_id, message_id, is_bot)\n    VALUES (\n        (SELECT id FROM users WHERE chat_id = '${botMessage.chatId}' LIMIT 1),\n        '${botMessage.messageText}', \n        '${botMessage.timestamp}',\n        ${botMessage.chatId},\n        NULL, \n        true  \n    );\n`;\n\nmsg.query = query;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 1000,
+        "wires": [
+            [
+                "6337bbc9bdf59b4c",
+                "d7c6b9e235b7da03"
+            ]
+        ]
+    },
+    {
+        "id": "6337bbc9bdf59b4c",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "respond",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 720,
+        "y": 1000,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d7c6b9e235b7da03",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add bot mess",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 555,
+        "y": 960,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "6d956f792630260e",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "add data ",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nconst Message = \"хвилинку додаю твої контакти\";\n\nconst chatId = msg.chatId;\nmsg.payload = {\n    \"chat_id\": chatId.toString(),\n    \"text\": Message\n};\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\n\nconst botMessage = {\n    chatId: chatId,\n    messageText: \"bot7\",\n    messageId: null,\n    timestamp: new Date().toISOString()\n};\n\nconst query = `\n    INSERT INTO messages (user_id, message_text, timestamp, chat_id, message_id, is_bot)\n    VALUES (\n        (SELECT id FROM users WHERE chat_id = '${botMessage.chatId}' LIMIT 1),\n        '${botMessage.messageText}', \n        '${botMessage.timestamp}',\n        ${botMessage.chatId},\n        NULL, \n        true  \n    );\n`;\n\nmsg.query = query;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 1080,
+        "wires": [
+            [
+                "1773e777d562e8f2",
+                "e31d526684e4ec76"
+            ]
+        ]
+    },
+    {
+        "id": "e31d526684e4ec76",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "respond",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 595,
+        "y": 1080,
+        "wires": [
+            [
+                "e3534c8892692477"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "1773e777d562e8f2",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add bot mess",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 555,
+        "y": 1020,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "1dcb8e0e1bbc8887",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "others",
+        "func": "if (msg.botMessages && msg.botMessages.length > 0) {\n\n    let lastMessageBot = msg.botMessages[0].message_text || \"bot1\";\n    console.log(\"lastMessageBot: \" + lastMessageBot);\n\n    let secondLastMessageBot = msg.botMessages[1] ? msg.botMessages[1].message_text : \"bot1\";\n    console.log(\"secondLastMessageBot: \" + secondLastMessageBot);\n\n    msg.lastMessageBot = lastMessageBot;\n    msg.secondLastMessageBot = secondLastMessageBot;\n} else {\n    console.log(\"Немає повідомлень від бота\");\n    msg.lastMessageBot = \"bot1\";\n    msg.secondLastMessageBot = \"bot2\";\n}\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 210,
+        "y": 1180,
+        "wires": [
+            [
+                "aae65b30aaae0125"
+            ]
+        ]
+    },
+    {
+        "id": "e3534c8892692477",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "add cont to BD",
+        "func": "\nif (msg.clientMessages.length < 2) {\n    msg.payload = \"Недостатньо клієнтських повідомлень для обробки.\";\n    return msg;\n}\n\nlet name = msg.clientMessages[1].message_text;\nlet birthDate = msg.clientMessages[0].message_text;\n\n\nfunction parseDate(dateString) {\n    const parts = dateString.split('.');\n    if (parts.length !== 3) {\n        throw new Error(\"Невірний формат дати\");\n    }\n    const day = parts[0];\n    const month = parts[1];\n    const year = parts[2];\n\n    return `${year}-${month}-${day}`;\n}\n\ntry {\n    birthDate = parseDate(birthDate);\n} catch (error) {\n    msg.payload = `Помилка формату дати: ${error.message}`;\n    return msg;\n}\n\nconst chatId = msg.chatId;\n\nconst query = `\n    INSERT INTO contacts (chat_id, name, birth_date)\n    VALUES (${chatId}, '${name}', '${birthDate}')\n    ON CONFLICT (name) DO UPDATE \n    SET birth_date = EXCLUDED.birth_date\n    RETURNING *; \n`;\n\nmsg.query = query;\n\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 1080,
+        "wires": [
+            [
+                "00eeb7b787586d02"
+            ]
+        ]
+    },
+    {
+        "id": "00eeb7b787586d02",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add contacts",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 825,
+        "y": 1080,
+        "wires": [
+            [
+                "4de1701645090886"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "1ef1c569bdcb5722",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "prep result mess",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nlet Message = \"\";\n\nif (msg.payload && msg.payload.length > 0) {\n\n    const addContact = msg.payload[0];  \n    Message = `Контакт \"${addContact.name}\" успішно додано.`;\n} else {\n    Message = \"упс щось пішло не так. Спробуйте ще раз.\";\n}\n\nconst chatId = msg.chatId;\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\nmsg.payload = {\n    \"chat_id\": chatId.toString(),\n    \"text\": Message\n};\n\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1010,
+        "y": 1080,
+        "wires": [
+            [
+                "dd62cd34bf6b4bc8"
+            ]
+        ]
+    },
+    {
+        "id": "dd62cd34bf6b4bc8",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "respond",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1155,
+        "y": 1140,
+        "wires": [
+            [
+                "35a3512f8eb4a9d7"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "e4b24bf238291049",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "SELECT all contacts",
+        "query": "SELECT * FROM contacts;\n",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 280,
+        "y": 1480,
+        "wires": [
+            [
+                "be42cb01a1e55211"
+            ]
+        ]
+    },
+    {
+        "id": "6df46835f12ade27",
+        "type": "inject",
+        "z": "38c5127c2180bb22",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 135,
+        "y": 1480,
+        "wires": [
+            [
+                "e4b24bf238291049"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "be42cb01a1e55211",
+        "type": "debug",
+        "z": "38c5127c2180bb22",
+        "name": "debug 36",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 435,
+        "y": 1480,
+        "wires": [],
+        "l": false
+    },
+    {
+        "id": "3a659fa174e3ebf5",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "POST instruction",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1570,
+        "y": 1200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4253ab7dbd2d2127",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "Prepare  instruction",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nconst chatId = msg.chatId;\n\nconst commandPrompt =  \"Які команди ти хочеш виконати? \\n\" +\n    \"1  — Додати контакт\\n\" +\n    \"2  — Переглянути контакти\\n\" +\n    \"3  — Видалити контакт\\n\" +\n    \"0  — завершити чат\\n\" +\n    \"Введи  команду (1, 2, 3 або 0):\";\n\n\nmsg.payload = {\n    \"chat_id\": chatId.toString(),\n    \"text\": commandPrompt\n};\n\n\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\n\nconst botMessage = {\n    chatId: chatId,\n    messageText: \"command\", \n    messageId: null,  \n    timestamp: new Date().toISOString() \n};\n\nconst query = `\n    INSERT INTO messages (user_id, message_text, timestamp, chat_id, message_id, is_bot)\n    VALUES (\n        (SELECT id FROM users WHERE chat_id = '${botMessage.chatId}' LIMIT 1),\n        '${botMessage.messageText}', \n        '${botMessage.timestamp}',\n        ${botMessage.chatId},\n        NULL,\n        true  \n    );\n`;\n\nmsg.query = query;\n\n//console.log(\"Bot Message Data: \", JSON.stringify(botMessage, null, 2));\n//console.log(\"SQL Query: \", query);\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1350,
+        "y": 1200,
+        "wires": [
+            [
+                "3a659fa174e3ebf5",
+                "f3a065a1d509d0ce"
+            ]
+        ]
+    },
+    {
+        "id": "35a3512f8eb4a9d7",
+        "type": "delay",
+        "z": "38c5127c2180bb22",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1215,
+        "y": 1200,
+        "wires": [
+            [
+                "4253ab7dbd2d2127"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "4de1701645090886",
+        "type": "delay",
+        "z": "38c5127c2180bb22",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 875,
+        "y": 1080,
+        "wires": [
+            [
+                "1ef1c569bdcb5722"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "4a0d3717b6518fe0",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "guery",
+        "func": "const chatId = msg.chatId;\n\n\nconst query = `\n    SELECT * \n    FROM contacts \n    WHERE chat_id = ${chatId};\n`;\n\n\nmsg.query = query;\n\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 760,
+        "wires": [
+            [
+                "216f79c317860192"
+            ]
+        ]
+    },
+    {
+        "id": "216f79c317860192",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add bot mess",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 755,
+        "y": 760,
+        "wires": [
+            [
+                "ede79465213fb238"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "a13380e5749bda19",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "result",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nconst chatId = msg.chatId;\nlet contactsMessage = \"Ваші контакти:\\n\\n\"; \n\nif (msg.payload.length > 0) {\n    msg.payload.forEach(contact => {\n        const birthDate = new Date(contact.birth_date).toLocaleDateString('uk-UA', {\n            year: 'numeric',\n            month: '2-digit',\n            day: '2-digit'\n        });\n        \n        contactsMessage += `Ім'я: ${contact.name}\\nДата народження: ${birthDate}\\n\\n`; // Додаємо новий рядок\n    });\n} else {\n    contactsMessage = \"Контакти не знайдені.\";\n}\n\nmsg.payload = {\n    \"chat_id\": chatId.toString(),\n    \"text\": contactsMessage\n};\n\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\n\n\nconst botMessage = {\n    chatId: chatId,\n    messageText: \"bot8\",\n    messageId: null,\n    timestamp: new Date().toISOString()\n};\n\nconst query = `\n    INSERT INTO messages (user_id, message_text, timestamp, chat_id, message_id, is_bot)\n    VALUES (\n        (SELECT id FROM users WHERE chat_id = '${botMessage.chatId}' LIMIT 1),\n        '${botMessage.messageText}', \n        '${botMessage.timestamp}',\n        ${botMessage.chatId},\n        NULL,\n        true  \n    );\n`;\n\nmsg.query = query;\n\nreturn msg;\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 930,
+        "y": 760,
+        "wires": [
+            [
+                "ea83e7d95ed68a23"
+            ]
+        ]
+    },
+    {
+        "id": "ea83e7d95ed68a23",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "respond",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1025,
+        "y": 760,
+        "wires": [
+            [
+                "707f2baa4f72e82b"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "69c8d9fbbbe413d4",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "POST instruction",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1390,
+        "y": 760,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "707f2baa4f72e82b",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": " instruction",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nconst chatId = msg.chatId;\n\nconst commandPrompt =  \"Які команди ти хочеш виконати? \\n\" +\n    \"1  — Додати контакт\\n\" +\n    \"2  — Переглянути контакти\\n\" +\n    \"3  — Видалити контакт\\n\" +\n    \"0  — завершити чат\\n\" +\n    \"Введи  команду (1, 2, 3 або 0):\";\n\n\nmsg.payload = {\n    \"chat_id\": chatId.toString(),\n    \"text\": commandPrompt\n};\n\n\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\n\nconst botMessage = {\n    chatId: chatId,\n    messageText: \"command\", \n    messageId: null,  \n    timestamp: new Date().toISOString() \n};\n\nconst query = `\n    INSERT INTO messages (user_id, message_text, timestamp, chat_id, message_id, is_bot)\n    VALUES (\n        (SELECT id FROM users WHERE chat_id = '${botMessage.chatId}' LIMIT 1),\n        '${botMessage.messageText}', \n        '${botMessage.timestamp}',\n        ${botMessage.chatId},\n        NULL,\n        true  \n    );\n`;\n\nmsg.query = query;\n\n//console.log(\"Bot Message Data: \", JSON.stringify(botMessage, null, 2));\n//console.log(\"SQL Query: \", query);\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 760,
+        "wires": [
+            [
+                "4fa8f4fb7f1f5796",
+                "723b958535aacef8"
+            ]
+        ]
+    },
+    {
+        "id": "ede79465213fb238",
+        "type": "delay",
+        "z": "38c5127c2180bb22",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 835,
+        "y": 760,
+        "wires": [
+            [
+                "a13380e5749bda19"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "4fa8f4fb7f1f5796",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add bot mess",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1245,
+        "y": 700,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "f3a065a1d509d0ce",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add bot mess",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1475,
+        "y": 1140,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "723b958535aacef8",
+        "type": "delay",
+        "z": "38c5127c2180bb22",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1245,
+        "y": 760,
+        "wires": [
+            [
+                "69c8d9fbbbe413d4"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "df6447fd76006e88",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "name for del",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nconst Message = \"Введіть ім'я контакту для видалення:\";\n\nconst chatId = msg.chatId;\n\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\n\nconst botMessage = {\n    chatId: chatId,\n    messageText: \"bot9\",\n    messageId: null,\n    timestamp: new Date().toISOString()\n};\n\nconst query = `\n    INSERT INTO messages (user_id, message_text, timestamp, chat_id, message_id, is_bot)\n    VALUES (\n        (SELECT id FROM users WHERE chat_id = '${botMessage.chatId}' LIMIT 1),\n        '${botMessage.messageText}', \n        '${botMessage.timestamp}',\n        ${botMessage.chatId},\n        NULL, \n        true  \n    );\n`;\n\nmsg.query = query;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 1160,
+        "wires": [
+            [
+                "d3f141ceed95d782",
+                "aa9a27d8ca12348b"
+            ]
+        ]
+    },
+    {
+        "id": "d3f141ceed95d782",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add bot mess",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 595,
+        "y": 1120,
+        "wires": [
+            []
+        ],
+        "l": false
+    },
+    {
+        "id": "aa9a27d8ca12348b",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "delete",
+        "func": "// Перевіряємо, що маємо хоча б одне клієнтське повідомлення для обробки\nif (msg.clientMessages.length < 1) {\n    msg.payload = \"Недостатньо повідомлень для обробки.\";\n    return msg;\n}\n\n// Отримуємо ім'я контакту з останнього повідомлення клієнта\nlet name = msg.clientMessages[0].message_text;\n\n// Готуємо SQL-запит для видалення контакту з таблиці контактів\nconst chatId = msg.chatId;\n\nconst query = `\n    DELETE FROM contacts\n    WHERE chat_id = ${chatId} AND name = '${name}'\n    RETURNING *; \n`;\n\nmsg.query = query;\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 1160,
+        "wires": [
+            [
+                "fb5238f6e8f81468"
+            ]
+        ]
+    },
+    {
+        "id": "fb5238f6e8f81468",
+        "type": "postgresql",
+        "z": "38c5127c2180bb22",
+        "name": "add bot mess",
+        "query": "{{{query}}}",
+        "postgreSQLConfig": "95857ffd5652ae76",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 815,
+        "y": 1140,
+        "wires": [
+            [
+                "7d9c1ef8d46ae567"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "7d9c1ef8d46ae567",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "prep result mess",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nlet Message = \"\";\n\nif (msg.payload && msg.payload.length > 0) {\n    const deletedContact = msg.payload[0];  \n    Message = `Контакт \"${deletedContact.name}\" успішно видалено.`;\n} else {\n\n    Message = \"Контакт не знайдено. Спробуйте ще раз.\";\n}\n\n\nconst chatId = msg.chatId;\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\nmsg.payload = {\n    \"chat_id\": chatId.toString(),\n    \"text\": Message\n};\n\nconsole.log(\"Message to send:\", Message);\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 950,
+        "y": 1140,
+        "wires": [
+            [
+                "dd62cd34bf6b4bc8"
+            ]
+        ]
+    },
+    {
+        "id": "d3e7e67618712813",
+        "type": "function",
+        "z": "38c5127c2180bb22",
+        "name": "result",
+        "func": "let telegramToken = global.get(\"telegramToken\");\nlet telegramBaseUrl = global.get(\"telegramBaseUrl\");\nconst chatId = msg.chatId;\nlet contactsMessage = \"Упс, щось пішло не так обери команду\"; \n\n\n\nmsg.payload = {\n    \"chat_id\": chatId.toString(),\n    \"text\": contactsMessage\n};\n\nmsg.url = telegramBaseUrl + telegramToken + \"/sendMessage\";\n\n\nreturn msg;\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 1240,
+        "wires": [
+            [
+                "449fc408df7b80ba"
+            ]
+        ]
+    },
+    {
+        "id": "449fc408df7b80ba",
+        "type": "http request",
+        "z": "38c5127c2180bb22",
+        "name": "respond",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1085,
+        "y": 1240,
+        "wires": [
+            [
+                "35a3512f8eb4a9d7"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "95857ffd5652ae76",
+        "type": "postgreSQLConfig",
+        "name": "",
+        "host": "localhost",
+        "hostFieldType": "str",
+        "port": "5432",
+        "portFieldType": "num",
+        "database": "birthday_bot",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": "10",
+        "maxFieldType": "num",
+        "idle": "1000",
+        "idleFieldType": "num",
+        "connectionTimeout": "10000",
+        "connectionTimeoutFieldType": "num",
+        "user": "yuliia",
+        "userFieldType": "str",
+        "password": "yuliia123",
+        "passwordFieldType": "str"
+    }
+]
